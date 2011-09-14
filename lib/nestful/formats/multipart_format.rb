@@ -42,15 +42,14 @@ module Nestful
           # Support nestled params
           if value.is_a?(Hash)
             to_multipart(value, key)
-            next
-          end
-
-          stream.write("--" + boundary + EOL)
-
-          if looks_like_a_file?(value)
-            create_file_field(key, value)
           else
-            create_field(key, value)
+            stream.write("--" + boundary + EOL)
+
+            if looks_like_a_file?(value)
+              create_file_field(key, value)
+            else
+              create_field(key, value)
+            end
           end
         end
 
