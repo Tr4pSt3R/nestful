@@ -34,20 +34,23 @@ module Nestful
         def to_multipart(params, namespace = nil)
           params.each do |key, value|
             key = namespace ? "#{namespace}[#{key}]" : key
+            encode_value(key, value)
+          end
+        end
 
-            # Support nestled params
-            if value.is_a?(Hash)
-              to_multipart(value, key)
-              next
-            end
+        def encode_value(key, value)
+          # Support nestled params
+          if value.is_a?(Hash)
+            to_multipart(value, key)
+            next
+          end
 
-            stream.write("--" + boundary + EOL)
+          stream.write("--" + boundary + EOL)
 
-            if looks_like_a_file?(value)
-              create_file_field(key, value)
-            else
-              create_field(key, value)
-            end
+          if looks_like_a_file?(value)
+            create_file_field(key, value)
+          else
+            create_field(key, value)
           end
         end
 
